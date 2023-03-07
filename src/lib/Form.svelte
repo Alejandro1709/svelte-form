@@ -1,4 +1,22 @@
-<form class="flex flex-col gap-4 mx-2">
+<script>
+  $: fullName = '';
+  $: email = '';
+  $: content = '';
+
+  const handleSubmitForm = () => {
+    const message = {
+      name: fullName,
+      email,
+      content,
+    };
+    console.log(message);
+  };
+</script>
+
+<form
+  class="flex flex-col gap-4 mx-2"
+  on:submit|preventDefault={handleSubmitForm}
+>
   <div class="flex flex-col gap-2">
     <label for="fullname">Nombre Completo</label>
     <input
@@ -6,6 +24,7 @@
       id="fullname"
       type="text"
       placeholder="John Doe"
+      bind:value={fullName}
     />
   </div>
   <div class="flex flex-col gap-2">
@@ -15,6 +34,7 @@
       id="email"
       type="text"
       placeholder="johndoe@mail.com"
+      bind:value={email}
     />
   </div>
   <div class="flex flex-col gap-2">
@@ -23,6 +43,7 @@
       class="border p-2 resize-none"
       id="content"
       placeholder="johndoe@mail.com"
+      bind:value={content}
     />
   </div>
   <div class="flex flex-col gap-2">
@@ -31,4 +52,5 @@
       >Enviar</button
     >
   </div>
+  <p>Cargando...</p>
 </form>
