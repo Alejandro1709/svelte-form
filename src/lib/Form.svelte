@@ -1,15 +1,37 @@
 <script>
+  import { supabase } from './supabaseClient';
+
   $: fullName = '';
   $: email = '';
   $: content = '';
+  $: state = 'idle';
 
-  const handleSubmitForm = () => {
+  const handleSubmitForm = async () => {
+    state = 'loading';
+
+    if (!fullName || !email || !content) {
+      state = 'error';
+      return;
+    }
+
     const message = {
-      name: fullName,
+      fullname: fullName,
       email,
       content,
     };
-    console.log(message);
+
+    const { data, error } = await supabase
+      .from('entry')
+      .insert(message)
+      .select();
+
+    if (error) {
+      state = 'error';
+      return;
+    }
+    state = 'success';
+
+    console.log(data, error);
   };
 </script>
 
@@ -48,9 +70,18 @@
   </div>
   <div class="flex flex-col gap-2">
     <button
-      class="bg-indigo-400 p-2 text-white text-lg font-semibold hover:bg-indigo-500 rounded-md"
+      disabled={state === 'success'}
+      class="bg-indigo-400 p-2 text-white text-lg font-semibold hover:bg-indigo-500 rounded-md cursor-pointer"
       >Enviar</button
     >
   </div>
-  <p>Cargando...</p>
+  {#if state === 'loading'}
+    <p>Cargando...</p>
+  {:else if state === 'success'}
+    <p>Mensaje enviado!</p>
+  {:else if state === 'error'}
+    <p>Hubo un error...</p>
+  {:else}
+    <p>Cuando este listo, mande el mensaje.</p>
+  {/if}
 </form>
